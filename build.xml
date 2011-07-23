@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<project name="Scramble" default="makejar" basedir=".">
+
+    <property name="root.project.name" value="Scramble"/>
+    <property name="test.class" value="com.scramble.AllTests"/>
+
+   <property name="jar.module" value="${root.project.name}.jar"/>
+
+    <path id="test.classpath">
+        <pathelement location="dist/${jar.module}"/>
+        <pathelement location="dist/test.jar"/>
+    </path>
+
+   <target name="compile" depends="clean">
+      <mkdir dir="build"/>
+      <javac destdir="build"
+             debug="on"
+             optimize="on">
+         <src path="src"/>
+      </javac>
+    <copy todir="build">
+      <fileset dir="src">             
+      	<include name="*.properties"/>
+        <include name="**/*.properties"/>
+	  </fileset>
+    </copy>
+
+   </target>
+
+   <target name="makejar" depends="compile">
+      <mkdir dir="dist"/>
+      <jar jarfile="dist/${jar.module}">
+         <fileset dir="build">
+             <include name="**/*.class"/>
+             <include name="*.properties"/>
+       <exclude name="test/*.class"/>
+         </fileset>
+        <manifest>
+          <attribute name="Main-Class" value="org.scramble.ui.SwingApp" />
+        </manifest>
+       </jar>
+<!--     <jar jarfile="dist/test.jar">
+           <fileset dir="build">
+             <include name="test/*.class"/>
+           </fileset>
+         </jar> 
+-->
+      <delete dir="build"/>
+   </target>
+
+   <target name="clean">
+      <delete dir="build"/>
+      <delete dir="dist"/>
+   </target>
+
+</project>
