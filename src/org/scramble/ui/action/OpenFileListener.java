@@ -59,12 +59,26 @@ public class OpenFileListener extends FileChoosingControlListener {
 			this.swingApp.setTextToDisplay("image.loaded", fileToOpen.getAbsolutePath());
 			
 			this.swingApp.setImageToDisplay(this.controller.getCurrentImage());
-			this.resizeFrame(this.controller.getCurrentImageWidth()*2 + 30, this.controller.getCurrentImageHeight() + 80);
+			this.resizeFrame(calculateNewWidth(), calculateNewHeight());
 			return true;			
 		}
 		this.swingApp.setTextToDisplay("image.load.failed", fileToOpen.getAbsolutePath());
 		return false;			
 
+	}
+
+	/**
+	 * @return
+	 */
+	private int calculateNewHeight() {
+		return this.controller.getCurrentImageHeight() + 80;
+	}
+
+	/**
+	 * @return
+	 */
+	private int calculateNewWidth() {
+		return this.controller.getCurrentImageWidth()*2 + 30;
 	}
 
 }
