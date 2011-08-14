@@ -26,38 +26,68 @@ public abstract class I18NMessageCapable {
 	private static final String LOCALE_FILE_NAME = "Scramble.loc";
 	
 	/**
-	 * CTOR using default locale
+	 * CTOR using locale specified either in the commandline or in a local file (file is higher priority)
+	 * @param bundleName
+	 * @param commandLineLocale
 	 */
-	protected I18NMessageCapable(final String bundleName) {
+	protected I18NMessageCapable(final String bundleName, final String commandLineLocale) {
 		super();
-		Locale locale = getLocale();
+		Locale locale = getLocale(commandLineLocale);
 		this.translator = ResourceBundle.getBundle(bundleName, locale);
 	}
 
 	/**
+	 * CTOR using locale specified in file
+	 * @param bundleName
+	 */
+	protected I18NMessageCapable(final String bundleName) {
+		this(bundleName, null);
+	}
+	
+	/**
 	 * @return the locale to use
 	 */
-	private Locale getLocale() {
+	private Locale getLocale(final String commandLineLocale) {
 		if(null != globalLocale) {
 			return globalLocale;
 		}
 		Locale locale = null;
-		String[] parts = getLocaleFromFile(); 
+		String[] parts = getLocalePartsFromFile(); 
 		
+		// Top priority is locale file
 		if(parts.length > 0){
-	        if(parts.length > 2) {
-	        	locale = new Locale(parts[0], parts[1], parts[2]);
-	        } else if(parts.length > 1) {
-	        	locale = new Locale(parts[0], parts[1]);
-	        } else {
-	        	locale = new Locale(parts[0]);	        	
-	        }
+	        locale = localeFromIsoStringParts(parts);
 		} else {
-			locale = Locale.getDefault();
+			if(null != commandLineLocale) {
+				try {
+					locale = localeFromIsoStringParts(commandLineLocale.split("_"));
+				}catch(Exception e) {
+					locale = null;
+				}				
+			}
+			if(null == locale) {
+				locale = Locale.getDefault();
+			}
 			writeLocaleToFile(locale);
-		}
+		} 
 		
 		globalLocale = locale;
+		return locale;
+	}
+
+	/**
+	 * @param localeParts
+	 * @return
+	 */
+	private Locale localeFromIsoStringParts(String[] localeParts) {
+		Locale locale;
+		if(localeParts.length > 2) {
+			locale = new Locale(localeParts[0], localeParts[1], localeParts[2]);
+		} else if(localeParts.length > 1) {
+			locale = new Locale(localeParts[0], localeParts[1]);
+		} else {
+			locale = new Locale(localeParts[0]);	        	
+		}
 		return locale;
 	}
 
@@ -78,7 +108,7 @@ public abstract class I18NMessageCapable {
 	/**
 	 * @return the locale parts (from the ISO code), or an empty array if not available
 	 */
-	private String[] getLocaleFromFile() {
+	private String[] getLocalePartsFromFile() {
 		String[] parts = new String[0];
 		File localeFile = new File(LOCALE_FILE_NAME);
 

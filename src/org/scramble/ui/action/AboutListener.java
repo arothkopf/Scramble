@@ -19,6 +19,8 @@ import javax.swing.Timer;
  *
  */
 public class AboutListener implements ActionListener {
+	private static final int ABOUT_TIMEOUT_MILLISECONDS = 5000;
+
 	private Component popupOwner;
 	
 	private Component aboutPopupContents;
@@ -70,8 +72,8 @@ public class AboutListener implements ActionListener {
 				currentAboutPopup.hide();
 			}
 		};
-		// Hide popup in 4 seconds
-		Timer timer = new Timer(4000, hider);
+		// Hide popup after a giving a few seconds to read it
+		Timer timer = new Timer(ABOUT_TIMEOUT_MILLISECONDS, hider);
 		timer.start();
 	}
 

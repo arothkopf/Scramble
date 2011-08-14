@@ -77,8 +77,8 @@ public class SwingApp extends I18NMessageCapable {
 
 	JMenuBar menuBar;
 
-	public SwingApp() {
-		super(RESOURCE_BUNDLE_NAME);
+	public SwingApp(final String commandLineLocale) {
+		super(RESOURCE_BUNDLE_NAME, commandLineLocale);
 	}
 
 	/**
@@ -86,16 +86,21 @@ public class SwingApp extends I18NMessageCapable {
 	 */
 	public static void main(String[] args) {
 		final ScrambleController controller = new ScrambleController();
-		makeApp(controller).display(APPLICATION_WIDTH, APPLICATION_HEIGHT);
+		makeApp(controller, args).display(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 	}
 
 	/**
 	 * Factory method
+	 * @param args Command-line arguments
 	 * 
 	 * @return Constructed SwingApp
 	 */
-	public static SwingApp makeApp(final ScrambleController controller) {
-		final SwingApp swingApp = new SwingApp();
+	public static SwingApp makeApp(final ScrambleController controller, String[] args) {
+		String commandLineLocale = null;
+		if(null != args && args.length > 0) {
+			commandLineLocale = args[0];
+		}
+		final SwingApp swingApp = new SwingApp(commandLineLocale);
 		swingApp.buildApp(controller);
 		return swingApp;
 	}
