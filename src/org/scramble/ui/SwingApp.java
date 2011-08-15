@@ -97,16 +97,20 @@ public class SwingApp extends I18NMessageCapable {
 	 */
 	public static SwingApp makeApp(final ScrambleController controller, String[] args) {
 		String commandLineLocale = null;
+		String dist = null;
 		if(null != args && args.length > 0) {
 			commandLineLocale = args[0];
+			if(args.length > 1) {
+				dist = args[1];
+			}
 		}
 		final SwingApp swingApp = new SwingApp(commandLineLocale);
-		swingApp.buildApp(controller);
+		swingApp.buildApp(controller, dist);
 		return swingApp;
 	}
 
 	
-	private void buildAboutContents() {
+	private void buildAboutContents(final 	String dist) {
 		this.aboutPopupContents = new JPanel(); 
 
 		this.aboutPopupContents.setLayout(
@@ -115,17 +119,29 @@ public class SwingApp extends I18NMessageCapable {
 		this.aboutPopupContents.add(new JLabel(this.getString("menu.item.about.desc")));
 		this.aboutPopupContents.add(new JLabel(this.getString("about.text.content")));
 		this.aboutPopupContents.add(new JLabel(this.getString("about.text.version")));
-		this.aboutPopupContents.add(new JLabel(this.getString("about.text.license")));
+		if(isWindowsBinaryDistribution(dist)) {
+			this.aboutPopupContents.add(new JLabel(this.getString("about.text.license.win")));
+		} else {
+			this.aboutPopupContents.add(new JLabel(this.getString("about.text.license")));			
+		}
 		this.aboutPopupContents.add(new JLabel(this.getString("message.disclaimer")));
 
 		this.aboutPopupContents.setBackground(Color.WHITE);
+	}
+
+	/**
+	 * @param dist
+	 * @return
+	 */
+	private boolean isWindowsBinaryDistribution(final String dist) {
+		return "win".equalsIgnoreCase(dist);
 	}
 	
 	/**
 	 * Set up the swing app
 	 * @param controller
 	 */
-	public void buildApp(ScrambleController controller) {
+	public void buildApp(ScrambleController controller, String dist) {
 		this.frame = new JFrame(); 
 
 		this.frame.setLayout(null);
@@ -145,7 +161,7 @@ public class SwingApp extends I18NMessageCapable {
 		this.menuBar = new JMenuBar();
 		this.menuBar.setBorder(new BevelBorder(BevelBorder.RAISED));
 
-		this.buildAboutContents(); // "About Scramble" popup 
+		this.buildAboutContents(dist); // "About Scramble" popup 
 		
 		// Create a menu and add it to the menu bar.
 		this.setUpFileMenu();
